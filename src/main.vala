@@ -38,7 +38,7 @@ public class Game : Object {
         Video.Renderer.create_with_window(SCREEN_WIDTH, SCREEN_HEIGHT, video_flags, out window, out renderer);
 
         player = new Player(renderer);
-        room = new Room(24, 24, renderer);
+        room = new Room(20, 20, renderer);
 
         var color = new Video.PixelFormat(window.get_pixelformat());
 
