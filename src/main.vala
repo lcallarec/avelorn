@@ -46,15 +46,12 @@ public class Game : Object {
     }
 
     private void draw () {
-        int16 x = (int16) rand.int_range (0, SCREEN_WIDTH);
-        int16 y = (int16) rand.int_range (0, SCREEN_HEIGHT);
-        int16 radius = (int16) rand.int_range (0, 100);
-
         renderer.clear();
 
         room.render();
         walls[0].render();
         player.render();
+
         renderer.present();
     }
 

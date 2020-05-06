@@ -22,7 +22,7 @@ public class RoomBuilder {
     }
 
     public Sprite[] top(int count) {
-        Sprite[] sprites = new Sprite[count - 1]; //Remove last top wall to not overlaps with right wall
+        Sprite[] sprites = new Sprite[count]; //Remove last top wall to not overlaps with right wall
         //Top & right connection
         sprites[0].src = Rect() {x = rand.int_range(1, 5) * TILE_SIZE, y = 0, w = 32, h = 112};
         sprites[0].dest = Rect() { x = geometry.x + (0 * TILE_SIZE), y = geometry.y, w = TILE_SIZE, h = 112};
@@ -39,13 +39,17 @@ public class RoomBuilder {
         //Top & right connection
         sprites[last_idx].src = Rect() {x = rand.int_range(1, 5) * TILE_SIZE, y = 0, w = 32, h = 112};
         sprites[last_idx].dest = Rect() { x = geometry.x + (last_idx * TILE_SIZE), y = geometry.y, w = TILE_SIZE, h = 112};
-        
+
         return sprites;
     }
 
     public Sprite[] right(int count) {
         Sprite[] sprites = new Sprite[count];
-        for(var i = 0; i < count; i++) {
+                
+        sprites[0].src = Rect() { x = 32, y = 128, w = 32, h = 32};
+        sprites[0].dest = Rect() { x = (int) geometry.w - TILE_SIZE, y = geometry.y, w = TILE_SIZE, h = TILE_SIZE};
+        
+        for(var i = 1; i < count; i++) {
             sprites[i].src  = Rect() {x = 128, y = rand.int_range(4, 6) * TILE_SIZE, w = 64, h = 32};
             sprites[i].dest = Rect() { x = (int) geometry.w - TILE_SIZE * 2, y = (int) geometry.y + (i * TILE_SIZE), w = TILE_SIZE * 2, h = TILE_SIZE};
         }
@@ -54,7 +58,9 @@ public class RoomBuilder {
 
     public Sprite[] bottom(int count) {
         Sprite[] sprites = new Sprite[count - 1]; //Remove last right to not overlap with right wall
-        for(var i = 0; i < count - 1; i++) {
+        sprites[0].src = Rect() {x = 2 * TILE_SIZE, y = 192, w = 32, h = 32};
+        sprites[0].dest = Rect() { x = geometry.x, y = (int) geometry.h - 32, w = 32, h = 32};
+        for(var i = 1; i < count - 1; i++) {
             sprites[i].src = Rect() {x = rand.int_range(0, 5) * TILE_SIZE, y = 192, w = 32, h = 32};
             sprites[i].dest = Rect() { x = geometry.x + (i * TILE_SIZE), y = (int) geometry.h - 32, w = 32, h = 32};
         }
@@ -62,11 +68,16 @@ public class RoomBuilder {
     }
 
     public Sprite[] left(int count) {
-        Sprite[] sprites = new Sprite[count - 1]; //Remove last bottom wall to avoid overlaps with bottom wall
-        for(var i = 0; i < count - 1; i++) {
+        Sprite[] sprites = new Sprite[count];
+
+        sprites[0].src = Rect() {x = 0, y = 128, w = 32, h = 32};
+        sprites[0].dest = Rect() { x = geometry.x, y = (int) geometry.y, w = 32, h = 32};
+
+        for(var i = 1; i < count - 1; i++) {
             sprites[i].src = Rect() {x = 64, y = rand.int_range(4, 6) * TILE_SIZE, w = 64, h = 32};
             sprites[i].dest = Rect() { x = geometry.x, y = (int) geometry.y + (i * TILE_SIZE), w = 64, h = 32};
         }
+     
         return sprites;
     }
 }
