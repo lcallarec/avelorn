@@ -74,16 +74,16 @@ public class Game : Object {
         stdout.printf("key : %d\n", event.keysym.sym);
         switch(event.keysym.sym) {
             case Input.Keycode.z:
-                player.move(Direction.UP, walls);
+                player.move(Direction.UP, room.get_boxes());
                 break;
             case Input.Keycode.q:
-                player.move(Direction.LEFT, walls);
+                player.move(Direction.LEFT, room.get_boxes());
                 break;
             case Input.Keycode.d:
-                player.move(Direction.RIGHT, walls);
+                player.move(Direction.RIGHT, room.get_boxes());
                 break;
             case Input.Keycode.s:
-                player.move(Direction.DOWN, walls);
+                player.move(Direction.DOWN, room.get_boxes());
                 break;
         }
     }
@@ -144,7 +144,7 @@ public class Player {
         return dest.is_intersecting(rect);
     }
 
-    public void move(Direction direction, Wall[] walls) {
+    public void move(Direction direction, Video.Rect[] boxes) {
         inc_step();
         src.x = (29 * step) + (3 * step + 1);
         Video.Rect new_dest = dest;
@@ -167,9 +167,9 @@ public class Player {
                 break;
         }
 
-        if (new_dest.is_intersecting(walls[0].pos)) {
-            return;
-        }
+       for (var i = 0; i < boxes.length; i++) {
+           if (new_dest.is_intersecting(boxes[i])) return;
+       }
 
         dest = new_dest;
     }
