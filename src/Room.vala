@@ -3,21 +3,43 @@ using SDL.Video;
 using SDLGraphics;
 using SDLImage;
 
-public class RoomSprites {
+
+public struct Structure {
+    public Sprite[] sprites;
+    public Rect[] box;
+}
+
+public class RoomBuilder {
     private const int TILE_SIZE = 32;
     private GLib.Rand rand = new GLib.Rand();
     private Rect geometry;
 
-    public RoomSprites(Rect geometry) {
+    public Structure[] structures;
+
+    public RoomBuilder(Rect geometry) {
         this.geometry = geometry;
+        structures = new Structure[2 * TILE_SIZE * (geometry.w + geometry.h)];
     }
 
     public Sprite[] top(int count) {
         Sprite[] sprites = new Sprite[count - 1]; //Remove last top wall to not overlaps with right wall
-        for(var i = 0; i < count - 1; i++) {
+        //Top & right connection
+        sprites[0].src = Rect() {x = rand.int_range(1, 5) * TILE_SIZE, y = 0, w = 32, h = 112};
+        sprites[0].dest = Rect() { x = geometry.x + (0 * TILE_SIZE), y = geometry.y, w = TILE_SIZE, h = 112};
+       
+        sprites[1].src = Rect() {x = rand.int_range(1, 5) * TILE_SIZE, y = 0, w = 32, h = 112};
+        sprites[1].dest = Rect() { x = geometry.x + (1 * TILE_SIZE), y = geometry.y, w = TILE_SIZE, h = 112};
+       
+        var last_idx = count - 2;
+        for(var i = 2; i < last_idx; i++) {
             sprites[i].src = Rect() {x = rand.int_range(1, 5) * TILE_SIZE, y = 0, w = 32, h = 128};
-            sprites[i].dest = Rect() { x = geometry.x + (i * TILE_SIZE), y = geometry.y, w = TILE_SIZE, h = 96};
+            sprites[i].dest = Rect() { x = geometry.x + (i * TILE_SIZE), y = geometry.y, w = TILE_SIZE, h = 128};
         }
+        
+        //Top & right connection
+        sprites[last_idx].src = Rect() {x = rand.int_range(1, 5) * TILE_SIZE, y = 0, w = 32, h = 112};
+        sprites[last_idx].dest = Rect() { x = geometry.x + (last_idx * TILE_SIZE), y = geometry.y, w = TILE_SIZE, h = 112};
+        
         return sprites;
     }
 
@@ -56,6 +78,7 @@ public class Room {
     
     private int width;
     private int height;
+
     private Rect geometry;
 
     private const int TILE_SIZE = 32;
@@ -75,12 +98,12 @@ public class Room {
 
         Rectangle.fill_rgba(this.renderer, (int16) geometry.x, (int16) geometry.y, (int16) geometry.w, (int16) geometry.h, 91, 80, 118, 255);
 
-        var rs = new RoomSprites(geometry);
+        var builder = new RoomBuilder(geometry);
 
-        top_walls = rs.top(width);
-        right_walls = rs.right(height);
-        bottom_walls = rs.bottom(width);
-        left_walls = rs.left(height);
+        top_walls = builder.top(width);
+        right_walls = builder.right(height);
+        bottom_walls = builder.bottom(width);
+        left_walls = builder.left(height);
     }
 
     public void render() {
