@@ -31,7 +31,7 @@ public class Game {
         Video.Renderer.create_with_window(SCREEN_WIDTH, SCREEN_HEIGHT, video_flags, out window, out renderer);
 
         player = new Player(renderer);
-        room = new Room(20, 20, renderer);
+        room = new Room(10, 10, renderer);
 
         var color = new Video.PixelFormat(window.get_pixelformat());
     }
@@ -39,7 +39,7 @@ public class Game {
     private void draw () {
         //background
         renderer.set_draw_color(34, 15, 41, 255);
-        
+
         renderer.clear();
 
 
@@ -60,13 +60,13 @@ public class Game {
     }
 
     private void on_keyboard_event (uint8[] keystate, KeyboardEvent event) {
-        stdout.printf(
-            "Key pressed scancode 0x%08X = %s, keycode 0x%08X = %s\n",
-            event.keysym.scancode,
-            event.keysym.scancode.get_name(),
-            event.keysym.sym,
-            event.keysym.sym.get_name()
-        );
+        //  stdout.printf(
+        //      "Key pressed scancode 0x%08X = %s, keycode 0x%08X = %s\n",
+        //      event.keysym.scancode,
+        //      event.keysym.scancode.get_name(),
+        //      event.keysym.sym,
+        //      event.keysym.sym.get_name()
+        //  );
 
         if (keystate[Input.Scancode.E] == 1) {
             player.move(Direction.UP, room.get_boxes());

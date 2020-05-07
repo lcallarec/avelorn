@@ -118,6 +118,8 @@ public class Room {
     private Structure left_walls;
     private Sprite[] floor; 
 
+    private Torch torch;
+
     public Room(int width, int heigth, Renderer renderer) {
         this.width = width;
         this.height = heigth;
@@ -133,6 +135,8 @@ public class Room {
         bottom_walls = builder.bottom(width);
         left_walls = builder.left(height);
         floor = builder.floor(width, height);
+
+        torch = new Torch(renderer);
     }
 
     public Rect[] get_boxes() {
@@ -161,6 +165,35 @@ public class Room {
         }
 
         renderer.set_draw_color(135, 111, 122, 255);
+
+        torch.render();
+
         //renderer.fill_rect(Rect() { x = (int) geometry.x + (int) geometry.w / 4, y = (int) geometry.y + (int) geometry.h / 4, w = geometry.w / 2, h = geometry.h / 2});
     }
+}
+
+public class Torch {
+    
+    private Video.Texture texture;
+    private unowned Video.Renderer renderer;
+    private SDL.Video.Surface sprite = load_png(new RWops.from_file("./resources/torch.png", "r"));
+    private int step = 0;
+    private int frame = 0;
+
+    public Torch(Renderer renderer) {
+        this.renderer = renderer;
+        texture = Video.Texture.create_from_surface(this.renderer, sprite);
+    }
+
+    public void render() {
+        if (++frame % 8 == 1) {
+            step = (++step) % 4;
+        }
+        renderer.copy(
+            texture,
+            Rect() {x = 24 * step, y = 0, w = 24, h = 42},
+            Rect() {x = 64, y = 64, w = 24, h = 42 }
+        );
+    }
+
 }
