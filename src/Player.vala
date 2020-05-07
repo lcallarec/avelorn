@@ -15,8 +15,11 @@ public class Player {
     private Video.Rect dest = Video.Rect() { w = 26, h = 43, x = 300, y = 300 };
     private Video.Rect src = Video.Rect() { w = 26, h = 43, x = 3, y = 5 };
 
-    private uint8 speed = 5;
+    private uint8 speed = 2;
     private uint8 step = 0;
+
+    private int frame = 0;
+
 
     public Player(Video.Renderer renderer) {
         this.renderer = renderer;
@@ -30,6 +33,7 @@ public class Player {
     public void move(Direction direction, Video.Rect[] boxes) {
         inc_step();
         src.x = (29 * step) + (3 * step + 1);
+        
         Video.Rect new_dest = dest;
 
         switch(direction) {
@@ -59,7 +63,9 @@ public class Player {
     }
 
     private void inc_step() {
-        step = (++step) % 3;
+        if (++frame % 4 == 1) {
+            step = (++step) % 3;
+        }
     }
 
     public void render() {
