@@ -58,10 +58,10 @@ public class RoomBuilder {
 
     public Structure bottom(int count) {
         Sprite[] sprites = new Sprite[count - 1]; //Remove last right to not overlap with right wall
-        sprites[0].src = Rect() {x = 2 * TILE_SIZE, y = 192, w = 32, h = 32};
+        sprites[0].src = Rect() {x = 2 * TILE_SIZE, y =  TILE_SIZE * 7, w = 32, h = 32};
         sprites[0].dest = Rect() { x = geometry.x, y = (int) geometry.h - 32, w = 32, h = 32};
         for(var i = 1; i < count - 1; i++) {
-            sprites[i].src = Rect() {x = rand.int_range(0, 5) * TILE_SIZE, y = 192, w = 32, h = 32};
+            sprites[i].src = Rect() {x = rand.int_range(1, 5) * TILE_SIZE, y = TILE_SIZE * 7, w = 32, h = 32};
             sprites[i].dest = Rect() { x = geometry.x + (i * TILE_SIZE), y = (int) geometry.h - 32, w = 32, h = 32};
         }
         return Structure() {sprites = sprites, box = Rect() { x = (int) geometry.x, y = (int) geometry.h - 32, w = geometry.w, h = 32}};
@@ -79,6 +79,24 @@ public class RoomBuilder {
         }
      
         return Structure() {sprites = sprites, box = Rect() { x = geometry.x, y = geometry.y, w = 32, h = geometry.h}};
+    }
+
+    public Sprite[] floor(int width, int height) {
+        int number_of_tiles = (width * height) / 30;
+        Sprite[] sprites = new Sprite[number_of_tiles];
+
+        //small lines
+        for (var i = 0; i < number_of_tiles / 2; i++) {
+            sprites[i].src = Rect() {x = rand.int_range(0, 2) * TILE_SIZE, y = TILE_SIZE * 6, w = 32, h = 32};
+            sprites[i].dest = Rect() { x = rand.int_range(5, width - 2) * TILE_SIZE, y =rand.int_range(3, height - 2) * TILE_SIZE, w = 32, h = 32};
+        }
+        //dirt
+        for (var i = number_of_tiles / 2; i < number_of_tiles - 1; i++) {
+            sprites[i].src = Rect() {x = 2 * TILE_SIZE, y = TILE_SIZE * 6, w = 32, h = 32};
+            sprites[i].dest = Rect() { x = rand.int_range(4, width - 2) * TILE_SIZE, y =rand.int_range(5, height - 5) * TILE_SIZE, w = 32, h = 32};
+        }
+
+        return sprites;
     }
 }
 
@@ -98,6 +116,7 @@ public class Room {
     private Structure right_walls;
     private Structure bottom_walls;
     private Structure left_walls;
+    private Sprite[] floor; 
 
     public Room(int width, int heigth, Renderer renderer) {
         this.width = width;
@@ -107,14 +126,13 @@ public class Room {
         this.renderer = renderer;
         texture = Video.Texture.create_from_surface(this.renderer, sprite);
 
-        Rectangle.fill_rgba(this.renderer, (int16) geometry.x, (int16) geometry.y, (int16) geometry.w, (int16) geometry.h, 91, 80, 118, 255);
-
         var builder = new RoomBuilder(geometry);
 
         top_walls = builder.top(width);
         right_walls = builder.right(height);
         bottom_walls = builder.bottom(width);
         left_walls = builder.left(height);
+        floor = builder.floor(width, height);
     }
 
     public Rect[] get_boxes() {
@@ -122,6 +140,10 @@ public class Room {
     }
 
     public void render() {
+        //Room floor color
+        renderer.set_draw_color(91, 80, 118, 255);
+        renderer.fill_rect(geometry);
+
         for(var i = 0; i < right_walls.sprites.length ; i++) {
             renderer.copy(texture, right_walls.sprites[i].src, right_walls.sprites[i].dest);
         }
@@ -134,5 +156,11 @@ public class Room {
         for(var i = 1; i < top_walls.sprites.length; i++) {
             renderer.copy(texture, top_walls.sprites[i].src, top_walls.sprites[i].dest);
         }
+        for(var i = 1; i < floor.length; i++) {
+            renderer.copy(texture, floor[i].src, floor[i].dest);
+        }
+
+        renderer.set_draw_color(135, 111, 122, 255);
+        //renderer.fill_rect(Rect() { x = (int) geometry.x + (int) geometry.w / 4, y = (int) geometry.y + (int) geometry.h / 4, w = geometry.w / 2, h = geometry.h / 2});
     }
 }

@@ -37,7 +37,11 @@ public class Game {
     }
 
     private void draw () {
+        //background
+        renderer.set_draw_color(34, 15, 41, 255);
+        
         renderer.clear();
+
 
         room.render();
         player.render();
