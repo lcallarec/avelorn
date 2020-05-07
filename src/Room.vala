@@ -3,7 +3,6 @@ using SDL.Video;
 using SDLGraphics;
 using SDLImage;
 
-
 public struct Structure {
     public Sprite[] sprites;
     public Rect box;
