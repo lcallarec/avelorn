@@ -25,15 +25,14 @@ public class Game : Object {
 
     public void run () {
         init_video ();
-
-        while (!done) {
-            draw();
+        while(!done) {
             process_events();
+            draw();
             SDL.Timer.delay(DELAY);
         }
     }
 
-    private void init_video () {
+    private void init_video() {
         SDL.Video.WindowFlags video_flags = SDL.Video.WindowFlags.OPENGL | SDL.Video.WindowFlags.BORDERLESS;
         Video.Renderer.create_with_window(SCREEN_WIDTH, SCREEN_HEIGHT, video_flags, out window, out renderer);
 
@@ -55,36 +54,36 @@ public class Game : Object {
         renderer.present();
     }
 
-    private void process_events () {
+    private void process_events() {
         Event event;
-        while (Event.poll (out event) == 1) {
-            switch (event.type) {
-            case EventType.QUIT:
-                this.done = true;
-                break;
-            case EventType.KEYDOWN:
-                this.on_keyboard_event (event.key);
-                break;
-            }
+        uint8[] keystate = (uint8[]) Input.Keyboard.get_state();
+        if (Event.poll(out event) != 0) {
+            if (event.type == EventType.QUIT) this.done = true;
+
         }
+        this.on_keyboard_event(keystate, event.key);
     }
 
-    private void on_keyboard_event (KeyboardEvent event) {
-        //window.set_fullscreen(SDL.Video.WindowFlags.FULLSCREEN);
-        stdout.printf("key : %d\n", event.keysym.sym);
-        switch(event.keysym.sym) {
-            case Input.Keycode.z:
-                player.move(Direction.UP, room.get_boxes());
-                break;
-            case Input.Keycode.q:
-                player.move(Direction.LEFT, room.get_boxes());
-                break;
-            case Input.Keycode.d:
-                player.move(Direction.RIGHT, room.get_boxes());
-                break;
-            case Input.Keycode.s:
-                player.move(Direction.DOWN, room.get_boxes());
-                break;
+    private void on_keyboard_event (uint8[] keystate, KeyboardEvent event) {
+        stdout.printf(
+            "Key pressed scancode 0x%08X = %s, keycode 0x%08X = %s\n",
+            event.keysym.scancode,
+            event.keysym.scancode.get_name(),
+            event.keysym.sym,
+            event.keysym.sym.get_name()
+        );
+
+        if (keystate[Input.Scancode.E] == 1) {
+            player.move(Direction.UP, room.get_boxes());
+        }
+        if (keystate[Input.Scancode.S] == 1) {
+            player.move(Direction.LEFT, room.get_boxes());
+        }
+        if (keystate[Input.Scancode.F] == 1) {
+            player.move(Direction.RIGHT, room.get_boxes());
+        }
+        if (keystate[Input.Scancode.D] == 1) {
+            player.move(Direction.DOWN, room.get_boxes());
         }
     }
 
@@ -148,6 +147,7 @@ public class Player {
         inc_step();
         src.x = (29 * step) + (3 * step + 1);
         Video.Rect new_dest = dest;
+
         switch(direction) {
             case Direction.UP:
                 new_dest.y -= speed;
