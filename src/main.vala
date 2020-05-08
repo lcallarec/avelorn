@@ -1,13 +1,6 @@
 using SDL;
 using SDLGraphics;
 
-public enum Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-}
-
 public class Game {
 
     private const int SCREEN_WIDTH = 1024;

@@ -1,6 +1,13 @@
 using SDL;
 using SDLImage;
 
+public enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+}
+
 public class Player {
     private Video.Texture texture;
     private unowned Video.Renderer renderer;

@@ -12,3 +12,4 @@ add_project_arguments(['--vapidir', vapi_dir], language: 'vala')
 deps = [glib, gobject, sdl2, sdl2_gfx, sdl2_image]
 
 subdir('src')
+subdir('tests')
