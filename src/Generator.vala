@@ -3,18 +3,6 @@ using SDL.Video;
 using SDLGraphics;
 using SDLImage;
 
-private const unichar[,] map = {
-    {'┌', '─', '─', '─', '─', '─', '─', '─', '┐', ' ', ' ', ' '},
-    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' ', ' ', ' '},
-    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '└', '─', '┐', ' '},
-    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' '},
-    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' '},
-    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' '},
-    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' '},
-    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '┌', '─', '┘', ' '},
-    {'└', '─', '─', '─', '─', '─', '─', '─', '┘', ' ', ',', ' '}
-};
-
 public struct Position {
     int x;
     int y;
@@ -62,9 +50,12 @@ public class Generator {
     private int x_origin;
     private int y_origin;
 
-    public Generator(int x, int y) {
+    private Map map;
+
+    public Generator(Map map, int x, int y) {
         x_origin = x;
         y_origin = y;
+        this.map = map;
     }
 
     public void generate() {
@@ -78,8 +69,9 @@ public class Generator {
 
         nodes += first_node;
 
-        stdout.printf ("map width %d\n", map.length[1]);
-        stdout.printf ("map height %d\n", map.length[0]);
+        stdout.printf ("map width %d\n", map.width);
+        stdout.printf ("map height %d\n", map.height);
+
         var i = 0;
         while(true) {
             i++;
@@ -107,18 +99,18 @@ public class Generator {
     protected Node move_to_next_corner(Node node) {
         Node found_node = node;
         if (node.direction == NodeDirection.RIGHT) {
-            stdout.printf("Start seek at %d,%d while col < %d\n", node.position.x + 1, node.position.y, map.length[0]);
+            stdout.printf("Start seek at %d,%d while col < %d\n", node.position.x + 1, node.position.y, map.width);
 
-            for (var col = node.position.x + 1; col < map.length[1]; col++) {
-                stdout.printf ("RIGHT : current char at %d,%d: %s \n", col, node.position.y, map[node.position.y, col].to_string());
-                if (map[node.position.y, col].to_string() == "─") {
+            for (var col = node.position.x + 1; col < map.width; col++) {
+                stdout.printf ("RIGHT : current char at %d,%d: %s \n", col, node.position.y, map.get_string_from_coord(node.position.y, col));
+                if (map.get_string_from_coord(node.position.y, col) == "─") {
                     stdout.printf ("Straight wall to RIGHT\n");
                     add_top_walls(col, node.position.y);
-                } else if (map[node.position.y, col].to_string() == "┐") {
+                } else if (map.get_string_from_coord(node.position.y, col) == "┐") {
                     stdout.printf ("Found corner : goes DOWN\n");
                     add_top_right_corner_walls(col, node.position.y);
                     return new Node({col, node.position.y}, NodeDirection.DOWN);
-                } else if (map[node.position.y, col].to_string() == "┘") {
+                } else if (map.get_string_from_coord(node.position.y, col) == "┘") {
                     stdout.printf ("Found corner : goes UP\n");
                     add_top_left_corner_walls(col, node.position.y);
                     return new Node({col, node.position.y}, NodeDirection.UP);
@@ -127,16 +119,16 @@ public class Generator {
         }
 
         if (node.direction == NodeDirection.DOWN) {
-            for (var row = node.position.y + 1; row < map.length[0]; row++) {
-                stdout.printf ("DOWN : current char at %d,%d: %s \n", node.position.x, row, map[row, node.position.x].to_string());
-                if (map[row, node.position.x].to_string() == "│") {
+            for (var row = node.position.y + 1; row < map.height; row++) {
+                stdout.printf ("DOWN : current char at %d,%d: %s \n", node.position.x, row, map.get_string_from_coord(row, node.position.x));
+                if (map.get_string_from_coord(row, node.position.x) == "│") {
                     stdout.printf ("Straight wall to DOWN\n");
                     add_right_walls(node.position.x, row);
-                } else if (map[row, node.position.x].to_string() == "└") {
+                } else if (map.get_string_from_coord(row, node.position.x) == "└") {
                     stdout.printf ("Found corner : goes RIGHT (from DOWN)\n");
                     add_bottom_right_corner_walls(node.position.x, row);
                     return new Node({node.position.x, row}, NodeDirection.RIGHT);
-                } else if (map[row, node.position.x].to_string() == "┘") {
+                } else if (map.get_string_from_coord(row, node.position.x) == "┘") {
                     stdout.printf ("Found corner : goes LEFT\n");
                     add_bottom_left_corner_walls(node.position.x, row);
                     return new Node({node.position.x, row}, NodeDirection.LEFT);
@@ -147,15 +139,15 @@ public class Generator {
         if (node.direction == NodeDirection.LEFT) {
             stdout.printf ("ENTER LEFT\n");
             for (var col = node.position.x - 1; col >= 0; col--) {
-                stdout.printf ("LEFT : current char at %d,%d: %s \n", col, node.position.y, map[node.position.y, col].to_string());
-                if (map[node.position.y, col].to_string() == "─") {
+                stdout.printf ("LEFT : current char at %d,%d: %s \n", col, node.position.y, map.get_string_from_coord(node.position.y, col));
+                if (map.get_string_from_coord(node.position.y, col) == "─") {
                     stdout.printf ("Straight wall to LEFT\n");
                     add_bottom_walls(col, node.position.y);
-                } else if (map[node.position.y, col].to_string() == "└") {
+                } else if (map.get_string_from_coord(node.position.y, col) == "└") {
                     add_bottom_right_corner_walls(col, node.position.y);
                     stdout.printf ("Found corner : goes UP\n");
                     return new Node({col, node.position.y}, NodeDirection.UP);
-                } else if (map[node.position.y, col].to_string() == "┌") {
+                } else if (map.get_string_from_coord(node.position.y, col) == "┌") {
                     stdout.printf ("Found corner : goes DOWN\n");
                     add_bottom_left_corner_walls(col, node.position.y);
                     return new Node({col, node.position.y}, NodeDirection.DOWN);
@@ -166,14 +158,14 @@ public class Generator {
         if (node.direction == NodeDirection.UP) {
             stdout.printf ("ENTER UP\n");
             for (var row = node.position.y - 1; row >= 0; row--) {
-                stdout.printf ("DOWN : current char at %d,%d: %s \n", node.position.x, row, map[row, node.position.x].to_string());
-                if (map[row, node.position.x].to_string() == "│") {
+                stdout.printf ("DOWN : current char at %d,%d: %s \n", node.position.x, row, map.get_string_from_coord(row, node.position.x));
+                if (map.get_string_from_coord(row, node.position.x) == "│") {
                     stdout.printf ("Straight wall to UP\n");
                     add_left_walls(node.position.x, row);
-                } else if (map[row, node.position.x].to_string() == "┌") {
+                } else if (map.get_string_from_coord(row, node.position.x) == "┌") {
                     stdout.printf ("Found corner : goes RIGHT (from UP)\n");
                     return new Node({node.position.x, row}, NodeDirection.RIGHT);
-                } else if (map[row, node.position.x].to_string() == "┐") {
+                } else if (map.get_string_from_coord(row, node.position.x) == "┐") {
                     stdout.printf ("Found corner : goes LEFT\n");
                     return new Node({node.position.x, row}, NodeDirection.LEFT);
                 }
