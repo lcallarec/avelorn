@@ -120,6 +120,9 @@ public class Room {
 
     private Torch torch;
 
+    private Gee.List<Sprite?> sprites;
+    private Gee.List<Rect?> boxes;
+
     public Room(int width, int heigth, Renderer renderer) {
         this.width = width;
         this.height = heigth;
@@ -137,15 +140,49 @@ public class Room {
         floor = builder.floor(width, height);
 
         torch = new Torch(renderer);
+
+        unichar[,] map = {
+            {'┌', '─', '─', '─', '─', '─', '─', '─', '┐', ' ', ' ', ' '},
+            {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' ', ' ', ' '},
+            {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '└', '─', '┐', ' '},
+            {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' '},
+            {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' '},
+            {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' '},
+            {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│', ' '},
+            {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '┌', '─', '┘', ' '},
+            {'└', '─', '─', '─', '─', '─', '─', '─', '┘', ' ', ',', ' '}
+        };
+
+        var generator = new Generator(new Map(map), 2, 2);
+        generator.generate();
+        sprites = generator.get_sprites();
+        boxes = generator.get_boxes();
+
     }
 
-    public Rect[] get_boxes() {
-        return {top_walls.box, right_walls.box, bottom_walls.box, left_walls.box};
+    public Gee.List<Rect?> get_boxes() {
+        return boxes;
+        //return {top_walls.box, right_walls.box, bottom_walls.box, left_walls.box};
     }
 
     public void render() {
-        //Room floor color
+        
         renderer.set_draw_color(91, 80, 118, 255);
+        sprites.foreach((sprite) => {
+            renderer.copy(texture, sprite.src, sprite.dest);
+            return true;
+        });
+
+        var r = 0;
+        boxes.foreach((box) => {
+            renderer.set_draw_color(r, 80, 118, 255);
+            r += 50;
+            renderer.draw_rect(box);
+            return true;
+        });
+
+        return;
+        //Room floor color
         renderer.fill_rect(geometry);
 
         for(var i = 0; i < right_walls.sprites.length ; i++) {

@@ -41,8 +41,6 @@ public class Game {
         renderer.set_draw_color(34, 15, 41, 255);
 
         renderer.clear();
-
-
         room.render();
         player.render();
 
@@ -54,7 +52,6 @@ public class Game {
         uint8[] keystate = (uint8[]) Input.Keyboard.get_state();
         if (Event.poll(out event) != 0) {
             if (event.type == EventType.QUIT) this.done = true;
-
         }
         this.on_keyboard_event(keystate, event.key);
     }

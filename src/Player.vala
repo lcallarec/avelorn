@@ -12,7 +12,7 @@ public class Player {
     private Video.Texture texture;
     private unowned Video.Renderer renderer;
     private SDL.Video.Surface sprite = load_png(new RWops.from_file("./resources/vx_chara03_d.png", "r"));
-    private Video.Rect dest = Video.Rect() { w = 26, h = 43, x = 300, y = 300 };
+    private Video.Rect dest = Video.Rect() { w = 26, h = 43, x = 200, y = 200 };
     private Video.Rect src = Video.Rect() { w = 26, h = 43, x = 3, y = 5 };
 
     private uint8 speed = 2;
@@ -30,7 +30,7 @@ public class Player {
         return dest.is_intersecting(rect);
     }
 
-    public void move(Direction direction, Video.Rect[] boxes) {
+    public void move(Direction direction, Gee.List<Video.Rect?> boxes) {
         inc_step();
         src.x = (29 * step) + (3 * step + 1);
         
@@ -55,9 +55,11 @@ public class Player {
                 break;
         }
 
-       for (var i = 0; i < boxes.length; i++) {
-           if (new_dest.is_intersecting(boxes[i])) return;
-       }
+
+        foreach(var box in boxes) {
+            debug("check if %d,%d,%d,%d collide with %d,%d,%d,%d\n", (int) new_dest.x,  (int) new_dest.y,  (int) new_dest.w,  (int) new_dest.h,  (int) box.x,  (int) box.y,  (int) box.w,  (int) box.h);
+            if (new_dest.is_intersecting(box)) return;
+        }
 
         dest = new_dest;
     }
