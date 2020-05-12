@@ -324,7 +324,7 @@ public class Generator {
         }
 
         sprites.sort((a, b) => {
-            return b.priority - a.priority;
+            return a.priority - b.priority;
         });
     }
 

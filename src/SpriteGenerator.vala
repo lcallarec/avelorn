@@ -17,8 +17,8 @@ public class SpriteGenerator {
         if (CornerFlag.RIGHT in corner.flag) {
             if (CornerFlag.NW in corner.flag) {
                 debug("CornerFlag.RIGHT  + CornerFlag.NW for corner x=%d y=%d\n", corner.x, corner.y);
-                sprites.add(from_NW_Inner(corner));
                 sprites.add_all(top_walls(corner.x, corner.y, corner.segment.length));
+                sprites.add(from_NW_Inner(corner));
             }
             if (CornerFlag.SW in corner.flag) {
                 debug("CornerFlag.RIGHT  + CornerFlag.SW\n");
@@ -53,8 +53,8 @@ public class SpriteGenerator {
         if (CornerFlag.UP in corner.flag) {
             if (CornerFlag.SW in corner.flag) {
                 debug("CornerFlag.UP  + CornerFlag.SW\n");
-                sprites.add(from_SW_Inner(corner));
                 sprites.add_all(left_walls(corner.next.x, corner.next.y, corner.segment.length));
+                sprites.add(from_SW_Inner(corner));
             }
             if (CornerFlag.SE in corner.flag) {
                 debug("CornerFlag.UP  + CornerFlag.SE\n");
@@ -67,7 +67,7 @@ public class SpriteGenerator {
 
     private Sprite from_NW_Inner(Corner corner) {
         Sprite sprite = Sprite() {
-            priority = Priority.NW,
+            priority = Priority.N, // N to override top wall continuation
             src = Rect() {x = 64, y = TILE_SIZE * 7, w = 64, h = 128},
             dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 64, h = 128}
         };
@@ -85,9 +85,9 @@ public class SpriteGenerator {
 
     private Sprite from_NE_Inner(Corner corner) {
         Sprite sprite = Sprite() {
-            priority = Priority.NE,
-            src = Rect() {x = 64, y = TILE_SIZE * 7, w = 32, h = 32},
-            dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
+            priority = Priority.H, //To override top wall
+            src = Rect() {x = TILE_SIZE * 4, y = TILE_SIZE * 7, w = 64, h = 128},
+            dest = Rect() { x = (origin.x + corner.x - 1) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 64, h = 128}
         };
         return sprite;
     }
@@ -131,8 +131,8 @@ public class SpriteGenerator {
     private Sprite from_SW_Outer(Corner corner) {
         Sprite sprite = Sprite() {
             priority = Priority.SW,
-            src = Rect() {x = 64, y = 0, w = 32, h = 32},
-            dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
+            src = Rect() {x = 0, y = TILE_SIZE * 3, w = TILE_SIZE * 3, h = TILE_SIZE * 4},
+            dest = Rect() { x = (origin.x + corner.x - 2) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = TILE_SIZE * 3, h = TILE_SIZE * 4}
         };
         return sprite;
     }
@@ -180,8 +180,8 @@ public class SpriteGenerator {
             debug("Add right walls at %d\n", i);
             Sprite sprite = Sprite() {
                 priority = Priority.E,
-                src = Rect() {x = 2 * TILE_SIZE, y = 2 * TILE_SIZE, w = 32, h = 32},
-                dest = Rect() { x = (origin.x + x) * TILE_SIZE, y = (origin.y + y) * TILE_SIZE + i, w = 32, h = 32}
+                src = Rect() {x = TILE_SIZE, y = 2 * TILE_SIZE, w = 64, h = 32},
+                dest = Rect() { x = (origin.x + x - 1) * TILE_SIZE, y = (origin.y + y) * TILE_SIZE + i, w = 64, h = 32}
             };
             walls.add(sprite);
             debug("Rect at x=%d y=%d w=%d h=%d", sprite.dest.x, sprite.dest.y, (int) sprite.dest.w, (int) sprite.dest.h);
@@ -198,8 +198,8 @@ public class SpriteGenerator {
             debug("Add left walls at %d\n", i);
             Sprite sprite = Sprite() {
                 priority = Priority.W,
-                src = Rect() {x = 7 * TILE_SIZE, y = 2 * TILE_SIZE, w = 32, h = 32},
-                dest = Rect() { x = (origin.x + x) * TILE_SIZE, y = (origin.y + y) * TILE_SIZE + i, w = 32, h = 32}
+                src = Rect() {x = 7 * TILE_SIZE, y = 2 * TILE_SIZE, w = 64, h = 32},
+                dest = Rect() { x = (origin.x + x) * TILE_SIZE, y = (origin.y + y) * TILE_SIZE + i, w = 64, h = 32}
             };
             walls.add(sprite);
             debug("Rect at x=%d y=%d w=%d h=%d", sprite.dest.x, sprite.dest.y, (int) sprite.dest.w, (int) sprite.dest.h);

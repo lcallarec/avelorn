@@ -8,7 +8,8 @@ public enum Priority {
     SW,
     W,
     NW,
-    N
+    N,
+    H
 }
 
 public struct Sprite {
