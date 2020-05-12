@@ -35,17 +35,19 @@ public class SpriteGenerator {
             if (CornerFlag.NW in corner.flag) {
                 debug("CornerFlag.DOWN  + CornerFlag.NW\n");
                 sprites.add(from_NW_Outer(corner));
+                sprites.add_all(right_walls(corner.x, corner.y, corner.segment.length));
             }
         }
         if (CornerFlag.LEFT in corner.flag) {
             if (CornerFlag.SE in corner.flag) {
                 debug("CornerFlag.LEFT  + CornerFlag.SE\n");
                 sprites.add(from_SE_Inner(corner));
-               sprites.add_all(bottom_walls(corner.next.x, corner.next.y, corner.segment.length));
+                sprites.add_all(bottom_walls(corner.next.x, corner.next.y, corner.segment.length));
             }
             if (CornerFlag.NE in corner.flag) {
                 debug("CornerFlag.LEFT  + CornerFlag.NE\n");
                 sprites.add(from_NE_Outer(corner));
+                sprites.add_all(bottom_walls(corner.next.x, corner.next.y, corner.segment.length));
             }
         }
         if (CornerFlag.UP in corner.flag) {
