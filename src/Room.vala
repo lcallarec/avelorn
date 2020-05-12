@@ -153,7 +153,7 @@ public class Room {
             {'└', '─', '─', '─', '─', '─', '─', '─', '┘', ' ', ',', ' '}
         };
 
-        var generator = new Generator(new Map(map), 2, 2);
+        var generator = new Generator(new Map(map), {2, 2});
         generator.generate();
         sprites = generator.get_sprites();
         boxes = generator.get_boxes();
@@ -162,7 +162,6 @@ public class Room {
 
     public Gee.List<Rect?> get_boxes() {
         return boxes;
-        //return {top_walls.box, right_walls.box, bottom_walls.box, left_walls.box};
     }
 
     public void render() {
