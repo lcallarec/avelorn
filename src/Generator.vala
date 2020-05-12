@@ -156,6 +156,7 @@ public class Generator {
     private GLib.Rand rand = new GLib.Rand();
 
     Gee.List<Rect?> boxes = new Gee.ArrayList<Rect?>();
+    Gee.List<Position?> outlines = new Gee.ArrayList<Position?>();
     Gee.List<Sprite?> sprites = new Gee.ArrayList<Sprite?>();
 
     private Position origin;
@@ -172,6 +173,10 @@ public class Generator {
         return edge;
     }
 
+    public Gee.List<Position?> get_outlines() {
+        return outlines;
+    }
+
     public void generate() {
         var first_corner = new Corner(CornerFlag.NW | CornerFlag.RIGHT, 0, 0);
         edge.add_corner(first_corner);
@@ -186,6 +191,7 @@ public class Generator {
 
         create_boxes();
         create_sprites();
+        create_outlines();
     }   
 
     private Corner next_corner() {
@@ -290,7 +296,18 @@ public class Generator {
             }
             var box = Rect() { x = (x + origin.x) * TILE_SIZE, y = (y + origin.y) * TILE_SIZE, w = w * TILE_SIZE, h = h * TILE_SIZE};
             debug("create box at %d, %d, %d, %d\n", box.x, box.y, (int) box.w, (int) box.h);
+            
             boxes.add(box);
+            edge.next();
+        }
+    }
+
+    private void create_outlines() {
+        edge.reset();
+        while(edge.has_next()) {
+            var corner = edge.current();
+            var point = Position() { x = (corner.x + origin.x) * TILE_SIZE, y = (corner.y + origin.y) * TILE_SIZE};
+            outlines.add(point);
             edge.next();
         }
     }
