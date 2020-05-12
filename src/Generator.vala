@@ -8,37 +8,6 @@ public struct Position {
     int y;
 }
 
-public enum NodeDirection {
-    UP,
-    RIGHT,
-    LEFT,
-    DOWN
-}
-
-public enum NodeOrientation {
-    TOP,
-    SIDE,
-    BOTTOM
-}
-
-public class Node {
-    public int x { get; private set;}
-    public int y { get; private set;}
-    public NodeOrientation orientation { get; private set; }
-    public NodeDirection direction { get; private set; }
-
-    public Node(int x, int y, NodeOrientation orientation, NodeDirection direction) {
-        this.x = x;
-        this.y = y;
-        this.orientation = orientation;
-        this.direction = direction;
-    }
-
-    public bool equals(Node other) {
-        return other.x == x && other.y == y;
-    }
-}
-
 public enum CornerOrientation {
     NW,
     NE,
@@ -336,13 +305,6 @@ public class Generator {
             sprites.add_all(sg.generate(corner));
             edge.next();
            
-        }
-        edge.reset();
-        while(edge.has_next()) {
-            //debug("Edge.current == %d\n", edge.current() == null ? 0 : 1);
-            debug("current %d,%d => %d\n",edge.current().x, edge.current().y, edge.current().segment.length);
-            edge.next();
-           // debug("Edge.current == %d\n", edge.current() == null ? 0 : 1);
         }
     }
 
