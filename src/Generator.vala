@@ -321,8 +321,11 @@ public class Generator {
             var corner = edge.current(); 
             sprites.add_all(sg.generate(corner));
             edge.next();
-           
         }
+
+        sprites.sort((a, b) => {
+            return b.priority - a.priority;
+        });
     }
 
     public Gee.List<Rect?> get_boxes() {

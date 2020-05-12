@@ -85,7 +85,7 @@ public class SpriteGenerator {
 
     private Sprite from_NE_Inner(Corner corner) {
         Sprite sprite = Sprite() {
-            priority = Priority.NW,
+            priority = Priority.NE,
             src = Rect() {x = 64, y = TILE_SIZE * 7, w = 32, h = 32},
             dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
         };
@@ -94,7 +94,7 @@ public class SpriteGenerator {
 
     private Sprite from_NE_Outer(Corner corner) {
         Sprite sprite = Sprite() {
-            priority = Priority.NW,
+            priority = Priority.NE,
             src = Rect() {x = TILE_SIZE * 7, y = 0, w = 32, h = 32},
             dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
         };
@@ -103,7 +103,7 @@ public class SpriteGenerator {
 
     private Sprite from_SE_Inner(Corner corner) {
         Sprite sprite = Sprite() {
-            priority = Priority.NW,
+            priority = Priority.SE,
             src = Rect() {x = TILE_SIZE * 7, y = TILE_SIZE * 3, w = 32, h = 32},
             dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
         };
@@ -112,7 +112,7 @@ public class SpriteGenerator {
 
     private Sprite from_SE_Outer(Corner corner) {
         Sprite sprite = Sprite() {
-            priority = Priority.NW,
+            priority = Priority.SE,
             src = Rect() {x = 64, y = 0, w = 32, h = 32},
             dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
         };
@@ -121,7 +121,7 @@ public class SpriteGenerator {
 
     private Sprite from_SW_Inner(Corner corner) {
         Sprite sprite = Sprite() {
-            priority = Priority.NW,
+            priority = Priority.SW,
             src = Rect() {x = 64, y = 0, w = 32, h = 32},
             dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
         };
@@ -130,7 +130,7 @@ public class SpriteGenerator {
 
     private Sprite from_SW_Outer(Corner corner) {
         Sprite sprite = Sprite() {
-            priority = Priority.NW,
+            priority = Priority.SW,
             src = Rect() {x = 64, y = 0, w = 32, h = 32},
             dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
         };
@@ -161,7 +161,7 @@ public class SpriteGenerator {
         for (var i = 0; i < length * TILE_SIZE; i += TILE_SIZE) {
             debug("Add bottom walls at %d\n", i);
             Sprite sprite = Sprite() {
-                priority = Priority.N,
+                priority = Priority.S,
                 src = Rect() {x = 3 * TILE_SIZE, y = 0, w = 32, h = 32},
                 dest = Rect() { x = (origin.x + x) * TILE_SIZE + i, y = (origin.y + y) * TILE_SIZE, w = 32, h = 32}
             };
@@ -179,7 +179,7 @@ public class SpriteGenerator {
         for (var i = 0; i < length * TILE_SIZE; i += TILE_SIZE) {
             debug("Add right walls at %d\n", i);
             Sprite sprite = Sprite() {
-                priority = Priority.N,
+                priority = Priority.E,
                 src = Rect() {x = 2 * TILE_SIZE, y = 2 * TILE_SIZE, w = 32, h = 32},
                 dest = Rect() { x = (origin.x + x) * TILE_SIZE, y = (origin.y + y) * TILE_SIZE + i, w = 32, h = 32}
             };
@@ -197,7 +197,7 @@ public class SpriteGenerator {
         for (var i = 0; i < length * TILE_SIZE; i += TILE_SIZE) {
             debug("Add left walls at %d\n", i);
             Sprite sprite = Sprite() {
-                priority = Priority.N,
+                priority = Priority.W,
                 src = Rect() {x = 7 * TILE_SIZE, y = 2 * TILE_SIZE, w = 32, h = 32},
                 dest = Rect() { x = (origin.x + x) * TILE_SIZE, y = (origin.y + y) * TILE_SIZE + i, w = 32, h = 32}
             };
