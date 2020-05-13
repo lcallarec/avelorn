@@ -5,7 +5,7 @@ public class SpriteGenerator {
 
     private Position origin;
     private const int TILE_SIZE = 32;
-
+    
     public SpriteGenerator(Position origin) {
         this.origin = origin;
     }

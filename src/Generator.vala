@@ -74,6 +74,12 @@ public class Corner {
     public bool equals(Corner other) {
         return other.x == x && other.y == y;
     }
+
+    public void ratio(int r) {
+        x *= r;
+        y *= r;
+        segment.ratio(r);
+    }
 }
 
 public class Segment {
@@ -98,11 +104,15 @@ public class Segment {
             length = from.y - to.y;
         }
     }
+
+    public void ratio(int r) {
+        length *= r;
+    }
 }
 
 public class Edge {
     private Corner first_corner = null;
-    private Corner current_corner = null;
+    private Corner last_corner = null;
     private bool closed = false;
 
     public int corner_size { get; private set; default = 0;}
@@ -112,18 +122,38 @@ public class Edge {
             first_corner = corner;
         } else {
             if (corner.equals(first_corner)) {
-                current_corner.link(corner);
+                last_corner.link(corner);
                 closed = true;
                 return;
             }
-            current_corner.link(corner);
+            last_corner.link(corner);
         }
-        current_corner = corner;
+        last_corner = corner;
         corner_size++;
     }
 
+    public bool is_closed() {
+        return closed;
+    }
+
+    public EdgeIterator iterator() {
+        return new EdgeIterator(first_corner, last_corner);
+    }
+}
+
+public class EdgeIterator {
+
+    private Corner first_corner;
+    private Corner last_corner;
+    private Corner current_corner;
+
+    public EdgeIterator(Corner first_corner, Corner last_corner) {
+        this.first_corner = first_corner;
+        this.current_corner = first_corner;
+        this.last_corner = last_corner;
+    }
     public bool has_next() {
-        return current().segment != null;
+        return current_corner.segment != null;
     }
 
     public Corner current() {
@@ -139,12 +169,8 @@ public class Edge {
         return first_corner;
     }
 
-    public void reset() {
-        current_corner = first_corner;
-    }
-
-    public bool is_closed() {
-        return closed;
+    public Corner last() {
+        return last_corner;
     }
 }
 
@@ -189,13 +215,20 @@ public class Generator {
             edge.add_corner(corner);
         }   
 
+        var i = edge.iterator();
+        while(i.has_next()) {
+            var c = i.current();
+            c.ratio(2);
+            i.next();
+        }
+
         create_boxes();
         create_sprites();
         create_outlines();
     }   
 
     private Corner next_corner() {
-        var corner = edge.current();
+        var corner = edge.iterator().last();
         if (CornerFlag.RIGHT in corner.flag) {
             debug("Enter CornerOrientation.NW\n");
             for (var col = corner.x + 1; col < map.width; col++) {
@@ -256,9 +289,9 @@ public class Generator {
     }
 
     private void create_boxes() {
-        edge.reset();
-        while(edge.has_next()) {
-            var corner = edge.current();
+        var iterator = edge.iterator();
+        while(iterator.has_next()) {
+            var corner = iterator.current();
 
             int x = 0;
             int y = 0;
@@ -298,29 +331,28 @@ public class Generator {
             debug("create box at %d, %d, %d, %d\n", box.x, box.y, (int) box.w, (int) box.h);
             
             boxes.add(box);
-            edge.next();
+            iterator.next();
         }
     }
 
     private void create_outlines() {
-        edge.reset();
-        while(edge.has_next()) {
-            var corner = edge.current();
+        var iterator = edge.iterator();
+        while(iterator.has_next()) {
+            var corner = iterator.current();
             var point = Position() { x = (corner.x + origin.x) * TILE_SIZE, y = (corner.y + origin.y) * TILE_SIZE};
             outlines.add(point);
-            edge.next();
+            iterator.next();
         }
     }
 
     public void create_sprites() {
-        edge.reset();
         var sg = new SpriteGenerator(origin);
         debug("Start create sprite loop\n");
-        while(edge.has_next()) {
-            debug("Create sprites loop\n");
-            var corner = edge.current(); 
+        var iterator = edge.iterator();
+        while(iterator.has_next()) {
+            var corner = iterator.current();
             sprites.add_all(sg.generate(corner));
-            edge.next();
+            iterator.next();
         }
 
         sprites.sort((a, b) => {
