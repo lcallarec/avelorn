@@ -179,7 +179,6 @@ public class Generator {
     private Edge edge = new Edge();
 
     private const int TILE_SIZE = 32;
-    private GLib.Rand rand = new GLib.Rand();
 
     Gee.List<Rect?> boxes = new Gee.ArrayList<Rect?>();
     Gee.List<Position?> outlines = new Gee.ArrayList<Position?>();
