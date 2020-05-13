@@ -5,7 +5,8 @@ public class SpriteGenerator {
 
     private Position origin;
     private const int TILE_SIZE = 32;
-    
+    private GLib.Rand rand = new GLib.Rand();
+
     public SpriteGenerator(Position origin) {
         this.origin = origin;
     }
@@ -68,7 +69,7 @@ public class SpriteGenerator {
     private Sprite from_NW_Inner(Corner corner) {
         Sprite sprite = Sprite() {
             priority = Priority.N, // N to override top wall continuation
-            src = Rect() {x = 64, y = TILE_SIZE * 7, w = 64, h = 128},
+            src = Rect() {x = 0, y = TILE_SIZE * 7, w = 64, h = 128},
             dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 64, h = 128}
         };
         return sprite;
@@ -86,7 +87,7 @@ public class SpriteGenerator {
     private Sprite from_NE_Inner(Corner corner) {
         Sprite sprite = Sprite() {
             priority = Priority.H, //To override top wall
-            src = Rect() {x = TILE_SIZE * 4, y = TILE_SIZE * 7, w = 64, h = 128},
+            src = Rect() {x = TILE_SIZE * 2, y = TILE_SIZE * 7, w = 64, h = 128},
             dest = Rect() { x = (origin.x + corner.x - 1) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 64, h = 128}
         };
         return sprite;
@@ -140,25 +141,65 @@ public class SpriteGenerator {
     private Gee.List<Sprite?> top_walls(int x, int y, int length) {
         Gee.List<Sprite?> walls = new Gee.ArrayList<Sprite?>();
         debug("Add top walls from %d to %d\n", TILE_SIZE, length * TILE_SIZE);
-        for (var i = TILE_SIZE; i < length * TILE_SIZE; i += TILE_SIZE) {
-            debug("Add top walls at %d\n", i);
+
+        //try to put the special bottom wall
+        //  if (length >= 7) {
+        //      Sprite sprite = Sprite() {
+        //          priority = Priority.S,
+        //          src = Rect() {x = 9 * TILE_SIZE, y = 0, w = 160, h = 128},
+        //          dest = Rect() { x = (origin.x + x + 1) * TILE_SIZE, y = (origin.y + y) * TILE_SIZE, w = 160, h = 128}
+        //      };
+        //      walls.add(sprite);
+        //      return walls;
+        //  }
+        var items = new TopWallGenerator().generate(length);
+        debug("ITEMS\n");
+        var pos = TILE_SIZE;
+        items.foreach((item) => {
+            debug("H\n");
             Sprite sprite = Sprite() {
                 priority = Priority.N,
-                src = Rect() {x = 3 * TILE_SIZE, y = TILE_SIZE * 3, w = 32, h = 128},
-                dest = Rect() { x = (origin.x + x) * TILE_SIZE + i, y = (origin.y + y) * TILE_SIZE, w = 32, h = 128}
+                src = item.src,
+                dest = Rect() { x = (origin.x + x) * TILE_SIZE + pos, y = (origin.y + y) * TILE_SIZE, w = item.src.w, h = item.src.h}
             };
             walls.add(sprite);
-            debug("Rect at x=%d y=%d w=%d h=%d", sprite.dest.x, sprite.dest.y, (int) sprite.dest.w, (int) sprite.dest.h);
-        }
+            pos += (int) item.src.w;
+            return true;
+        });
+
+        //  for (var i = TILE_SIZE; i < length * TILE_SIZE; i += TILE_SIZE) {
+        //      debug("Add top walls at %d\n", i);
+        //      Sprite sprite = Sprite() {
+        //          priority = Priority.N,
+        //          src = Rect() {x = rand.int_range(3, 6) * TILE_SIZE, y = TILE_SIZE * 3, w = 32, h = 128},
+        //          dest = Rect() { x = (origin.x + x) * TILE_SIZE + i, y = (origin.y + y) * TILE_SIZE, w = 32, h = 128}
+        //      };
+        //      walls.add(sprite);
+        //      debug("Rect at x=%d y=%d w=%d h=%d", sprite.dest.x, sprite.dest.y, (int) sprite.dest.w, (int) sprite.dest.h);
+        //  }
       
         return walls;
     }
 
     private Gee.List<Sprite?> bottom_walls(int x, int y, int length) {
         Gee.List<Sprite?> walls = new Gee.ArrayList<Sprite?>();
-        debug("Add bottom walls from %d to %d\n", 0, length * TILE_SIZE);
+        
+        var len = length * TILE_SIZE;
+
+        debug("Add bottom walls from %d to %d\n", 0, len);
        
-        for (var i = 0; i < length * TILE_SIZE; i += TILE_SIZE) {
+        // try to put the special bottom wall
+        //  if (length >= 7) {
+        //      Sprite sprite = Sprite() {
+        //          priority = Priority.S,
+        //          src = Rect() {x = 4 * TILE_SIZE, y = 7 * TILE_SIZE, w = 160, h = 64},
+        //          dest = Rect() { x = (origin.x + x + 1) * TILE_SIZE, y = (origin.y + y - 1) * TILE_SIZE, w = 160, h = 64}
+        //      };
+        //      walls.add(sprite);
+        //      return walls;
+        //  }
+
+        for (var i = 0; i < len; i += TILE_SIZE) {
             debug("Add bottom walls at %d\n", i);
             Sprite sprite = Sprite() {
                 priority = Priority.S,
@@ -206,5 +247,67 @@ public class SpriteGenerator {
         }
       
         return walls;
+    }
+}
+
+public struct DecorationItem {
+    public int length;
+    public Rect? src;
+}
+
+public class TopWallGenerator {
+
+    private const int TILE_SIZE = 32;
+
+    private GLib.Rand rand = new GLib.Rand();
+
+    private DecorationItem pillar = DecorationItem() { length = 5 };
+
+    private DecorationItem walls_with_torch = DecorationItem() { length = 3 };
+
+    private DecorationItem walls = DecorationItem() { length = 3 };
+
+    private DecorationItem wall = DecorationItem() { length = 1 };
+    
+    public Gee.List<DecorationItem?> generate(int length) {
+        var nums = new Gee.ArrayList<DecorationItem?>();
+
+        var remaining_length = length - 1;
+        while (remaining_length > 0) {
+            var item = get_item();
+            if (remaining_length - item.length < 0) {
+                continue;
+            }
+
+            remaining_length -= item.length;
+            nums.add(item);
+        }
+
+        return nums;
+    }
+
+    private DecorationItem get_item() {
+       var random = rand.int_range(0, 4);
+       var item = wall;
+       debug("RANDOM %d\n", random);
+        switch (random) {
+            case 0:
+                item = pillar;
+                item.src = Rect() { x = 9 * TILE_SIZE, y = 0, w = 160, h = 128 };
+                break;
+            case 1:
+                item = walls_with_torch;
+                item.src = Rect() {x = TILE_SIZE * 3, y = TILE_SIZE * 3, w = 32 * 3, h = 128};
+                break;
+            case 2:
+                item = walls;
+                item.src = Rect() {x = TILE_SIZE * 3, y = TILE_SIZE * 3, w = 32 * 3, h = 128};
+                break;
+            case 3:
+                item = wall;
+                item.src = Rect() {x = rand.int_range(3, 6) * TILE_SIZE, y = TILE_SIZE * 3, w = 32, h = 128};
+                break;
+        }
+        return item;
     }
 }
