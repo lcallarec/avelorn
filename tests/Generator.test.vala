@@ -1,7 +1,7 @@
 void generator() {
     Test.add_func("/Generator/Edge)", () => {
         //given
-        var generator = new Generator(new Map(get_small_map()), {0, 0});
+        var generator = new Generator(new ArrayMapReader(get_small_map()), {0, 0});
 
         //when
         generator.generate();
@@ -13,7 +13,7 @@ void generator() {
 
     Test.add_func("/Generator/Boxes)", () => {
         //given
-        var generator = new Generator(new Map(get_small_map()), {0, 0});
+        var generator = new Generator(new ArrayMapReader(get_small_map()), {0, 0});
         var ratio = 2;
 
         //when

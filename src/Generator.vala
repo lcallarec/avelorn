@@ -186,12 +186,11 @@ public class Generator {
 
     private Position origin;
 
-    private Map map;
+    private MapReader map_reader;
 
-
-    public Generator(Map map, Position origin) {
+    public Generator(MapReader map_reader, Position origin) {
         this.origin = origin;
-        this.map = map;
+        this.map_reader = map_reader;
     }
 
     public Edge get_edge() {
@@ -230,12 +229,12 @@ public class Generator {
         var corner = edge.iterator().last();
         if (CornerFlag.RIGHT in corner.flag) {
             debug("Enter CornerOrientation.NW\n");
-            for (var col = corner.x + 1; col < map.width; col++) {
-                debug ("RIGHT : current char at %d,%d: %s \n", col, corner.y, map.get_string_from_coord(corner.y, col));
-                if (map.get_string_from_coord(corner.y, col) == "┐") {
+            for (var col = corner.x + 1; col < map_reader.width; col++) {
+                debug ("RIGHT : current char at %d,%d: %s \n", col, corner.y, map_reader.get_string_from_coord(corner.y, col));
+                if (map_reader.get_string_from_coord(corner.y, col) == "┐") {
                     debug ("Found next corner : goes DOWN\n");
                     return new Corner(CornerFlag.NE | CornerFlag.DOWN, col, corner.y);
-                } else if (map.get_string_from_coord(corner.y, col) == "┘") {
+                } else if (map_reader.get_string_from_coord(corner.y, col) == "┘") {
                     debug ("Found corner : goes UP\n");
                     return new Corner(CornerFlag.SE | CornerFlag.UP, col, corner.y);
                 }
@@ -244,12 +243,12 @@ public class Generator {
 
         if (CornerFlag.DOWN in corner.flag) {
             debug("CornerOrientation.NE\n");
-            for (var row = corner.y + 1; row < map.height; row++) {
-                debug ("DOWN : current char at %d,%d: %s \n", corner.x, row, map.get_string_from_coord(row, corner.x));
-                if (map.get_string_from_coord(row, corner.x) == "└") {
+            for (var row = corner.y + 1; row < map_reader.height; row++) {
+                debug ("DOWN : current char at %d,%d: %s \n", corner.x, row, map_reader.get_string_from_coord(row, corner.x));
+                if (map_reader.get_string_from_coord(row, corner.x) == "└") {
                     debug ("Found corner : goes RIGHT (from DOWN)\n");
                     return new Corner(CornerFlag.SW | CornerFlag.RIGHT, corner.x, row);
-                } else if (map.get_string_from_coord(row, corner.x) == "┘") {
+                } else if (map_reader.get_string_from_coord(row, corner.x) == "┘") {
                     debug ("Found corner : goes LEFT\n");
                     return new Corner(CornerFlag.SE | CornerFlag.LEFT, corner.x, row);
                 }
@@ -259,11 +258,11 @@ public class Generator {
         if (CornerFlag.LEFT in corner.flag) {
             debug("Enter CornerOrientation.SE\n");
             for (var col = corner.x - 1; col >= 0; col--) {
-                debug ("LEFT : current char at %d,%d: %s \n", col, corner.y, map.get_string_from_coord(corner.y, col));
-                if (map.get_string_from_coord(corner.y, col) == "└") {
+                debug ("LEFT : current char at %d,%d: %s \n", col, corner.y, map_reader.get_string_from_coord(corner.y, col));
+                if (map_reader.get_string_from_coord(corner.y, col) == "└") {
                     debug ("Found corner : goes UP\n");
                     return new Corner(CornerFlag.SW | CornerFlag.UP, col, corner.y);
-                } else if (map.get_string_from_coord(corner.y, col) == "┌") {
+                } else if (map_reader.get_string_from_coord(corner.y, col) == "┌") {
                     debug ("Found corner : goes DOWN\n");
                     return new Corner(CornerFlag.NW | CornerFlag.DOWN, col, corner.y);
                 }
@@ -273,11 +272,11 @@ public class Generator {
         if (corner.direction == CornerDirection.UP) {
             debug("Enter CornerOrientation.SW\n");
             for (var row = corner.y - 1; row >= 0; row--) {
-                debug ("UP : current char at %d,%d: %s \n", corner.x, row, map.get_string_from_coord(row, corner.x));
-                if (map.get_string_from_coord(row, corner.x) == "┌") {
+                debug ("UP : current char at %d,%d: %s \n", corner.x, row, map_reader.get_string_from_coord(row, corner.x));
+                if (map_reader.get_string_from_coord(row, corner.x) == "┌") {
                     debug ("Found corner : goes RIGHT (from UP)\n");
                     return new Corner(CornerFlag.NW | CornerFlag.RIGHT, corner.x, row);
-                } else if (map.get_string_from_coord(row, corner.x) == "┐") {
+                } else if (map_reader.get_string_from_coord(row, corner.x) == "┐") {
                     debug ("Found corner : goes LEFT\n");
                     return new Corner(CornerFlag.NE | CornerFlag.LEFT, corner.x, row);
                 }

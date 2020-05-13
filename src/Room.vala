@@ -44,8 +44,7 @@ public class Room {
             {' ', ' ', ' ', ' ', '│', ' ', '│', ' ', ' ', ' ', ','},
             {' ', ' ', ' ', ' ', '└', '─', '┘', ' ', ' ', ' ', ','}
         };
-
-        var generator = new Generator(new Map(map), {2, 2});
+        var generator = new Generator(new ArrayMapReader(map), {2, 2});
         generator.generate();
         sprites = generator.get_sprites();
         boxes = generator.get_boxes();

@@ -1,7 +1,7 @@
 
 sources = files(
     'Generator.vala',
-    'Map.vala',
+    'MapReader.vala',
     'Player.vala',
     'SpriteGenerator.vala',
     'Room.vala',
