@@ -323,7 +323,7 @@ public class Generator {
                 x = next.x;
                 y = next.y;
                 w = 1;
-                h = corner.segment.length;
+                h = corner.segment.orientation == SegmentOrientation.LEFT ? corner.segment.length + 2 : corner.segment.length; //If SegmentOrientation.LEFT, it continues a top wall
             }
             var box = Rect() { x = (x + origin.x) * TILE_SIZE, y = (y + origin.y) * TILE_SIZE, w = w * TILE_SIZE, h = h * TILE_SIZE};
             debug("create box at %d, %d, %d, %d\n", box.x, box.y, (int) box.w, (int) box.h);

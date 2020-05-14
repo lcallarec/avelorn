@@ -114,8 +114,8 @@ public class SpriteGenerator {
     private Sprite from_SE_Outer(Corner corner) {
         Sprite sprite = Sprite() {
             priority = Priority.SE,
-            src = Rect() {x = 64, y = 0, w = 32, h = 32},
-            dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y) * TILE_SIZE, w = 32, h = 32}
+            src = Rect() {x = TILE_SIZE * 7, y = TILE_SIZE, w = 64, h = 192},
+            dest = Rect() { x = (origin.x + corner.x) * TILE_SIZE, y = (origin.y + corner.y - 2) * TILE_SIZE, w = 64, h = 192}
         };
         return sprite;
     }
