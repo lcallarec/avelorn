@@ -15,10 +15,6 @@ public class Room {
 
     private const int TILE_SIZE = 32;
 
-    private Sprite[] floor; 
-
-    private Torch torch;
-
     private Gee.List<Sprite?> sprites;
     private Gee.List<Rect?> boxes;
     private Gee.List<Position?> outlines;
@@ -31,8 +27,6 @@ public class Room {
 
         this.renderer = renderer;
         texture = Video.Texture.create_from_surface(this.renderer, sprite);
-
-        torch = new Torch(renderer);
 
         unichar[,] map = {
             {'┌', '─', '─', '─', '─', '─', '─', '─', '┐', ' ', ' '},
@@ -69,7 +63,7 @@ public class Room {
         Polygon.fill_rgba(renderer, vx, vy, outlines.size, 91, 80, 118, 255);
 
         sprites.foreach((sprite) => {
-            renderer.copy(texture, sprite.src, sprite.dest);
+            sprite.render(renderer, texture);
             return true;
         });
 
@@ -77,37 +71,8 @@ public class Room {
         boxes.foreach((box) => {
             renderer.set_draw_color(r, 80, 118, 255);
             r += 50;
-            renderer.draw_rect(box);
+            //renderer.draw_rect(box);
             return true;
         });
-        
-
-
-        //torch.render();
-    }
-}
-
-public class Torch {
-    
-    private Video.Texture texture;
-    private unowned Video.Renderer renderer;
-    private SDL.Video.Surface sprite = load_png(new RWops.from_file("./resources/torch.png", "r"));
-    private int step = 0;
-    private int frame = 0;
-
-    public Torch(Renderer renderer) {
-        this.renderer = renderer;
-        texture = Video.Texture.create_from_surface(this.renderer, sprite);
-    }
-
-    public void render() {
-        if (++frame % 8 == 1) {
-            step = (++step) % 4;
-        }
-        renderer.copy(
-            texture,
-            Rect() {x = 24 * step, y = 0, w = 24, h = 42},
-            Rect() {x = 64, y = 64, w = 24, h = 42 }
-        );
     }
 }
